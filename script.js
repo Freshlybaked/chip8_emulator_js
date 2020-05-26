@@ -88,12 +88,12 @@ function initialiseKeyboardEventHandlers(){
 }
 
 function beginEmulationLoop(){
-    // window.setInterval(emulateOneCycle, 0);
+    window.setInterval(emulateOneCycle, 0);
     // window.requestAnimationFrame(emulateOneCycle);
 
-    let dt = 0;
-    for(let i = 0; i < 100000; ++i){
-    }
+    // let dt = 0;
+    // for(let i = 0; i < 100000; ++i){
+    // }
 }
 
 var skipPCIncrement = false;
