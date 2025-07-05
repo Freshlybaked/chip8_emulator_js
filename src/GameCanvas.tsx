@@ -13,11 +13,12 @@ function GameCanvas(props: any) {
     let buffer:number[] = [gridWidth * gridHeight].fill(0);
 
     useEffect(() => {
-        console.log("GameCanvas mounted");
         let canvasRef:HTMLCanvasElement = document.getElementById("game_canvas") as HTMLCanvasElement
         canvasCtx = canvasRef.getContext("2d") as CanvasRenderingContext2D;
+        canvasRef.width = gridWidth * pixelSize;
+        canvasRef.height = gridHeight * pixelSize;
         canvasCtx.strokeStyle = 'black';
-        canvasCtx.strokeRect(0, 0, (gridWidth * pixelSize) + 2, (gridHeight * pixelSize) + 2);
+        canvasCtx.strokeRect(0, 0, (gridWidth * pixelSize), (gridHeight * pixelSize));
     });
 
     function drawPixel(x:number, y:number):boolean{
@@ -65,9 +66,9 @@ function GameCanvas(props: any) {
 
     return (
         <>
-        <div>
-            <canvas id="game_canvas"></canvas>
-        </div>
+            <div>
+                <canvas id="game_canvas"></canvas>
+            </div>
         </>
     )
 }

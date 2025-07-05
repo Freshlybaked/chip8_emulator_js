@@ -1,5 +1,3 @@
-// import './App.css'
-
 import GameCanvas from './GameCanvas'
 
 function App() {
