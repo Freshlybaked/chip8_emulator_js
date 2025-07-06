@@ -2,6 +2,7 @@ export class CollisionAwareRenderBuffer{
     private buffer:Uint8Array;
     readonly width:number;
     readonly height:number;
+    public test:number = 0;
 
     constructor(width: number, height: number) {
         this.width = width;
@@ -14,7 +15,7 @@ export class CollisionAwareRenderBuffer{
 
         // If a collision occured, set the value in the buffer to 0, else 1
         this.setPixel(x, y, collisionOccured ? 0 : 1);
-        
+
         return collisionOccured;
     }
 
