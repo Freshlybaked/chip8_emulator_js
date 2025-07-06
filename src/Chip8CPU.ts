@@ -184,14 +184,16 @@ export class Chip8CPU{
     private execute1nnn = () => {
         let nnn = this.getOpcodeThreeNibbleOperand();
         this.pc = nnn;
+        this.skipPCIncrement = true;
     }
 
     // CALL
     private execute2nnn = () => {
         let nnn = this.getOpcodeThreeNibbleOperand();
         ++this.sp;
-        this.stack[this.sp] = this.pc;
+        this.stack[this.sp] = this.pc + 2;
         this.pc = nnn;
+        this.skipPCIncrement = true;
     }
 
     // SE
@@ -259,24 +261,29 @@ export class Chip8CPU{
                 break;
             case 4: // ADD
                 let res = this.V[x] + this.V[y];
-                this.V[0xF] = res > 255 ? 1 : 0;
                 this.V[x] = res & 0xFF;
+                this.V[0xF] = res > 255 ? 1 : 0;
                 break;
             case 5: // SUB
-                this.V[0xF] = this.V[x] > this.V[y] ? 1 : 0;
-                this.V[x] = this.V[x] - this.V[y];
+                let tempX = this.V[x];
+                this.V[x] = (this.V[x] - this.V[y]) & 0xFF;
+                this.V[0xF] = tempX >= this.V[y] ? 1 : 0;
                 break;
             case 6: // SHR
-                this.V[0xF] = (this.V[x] & 0x1) == 1 ? 1 : 0;
-                this.V[x] = this.V[x] / 2;
+                let shrX = this.V[x]
+                let shrRes = this.V[x] >> 1 
+                this.V[x] = shrRes & 0xFF;
+                this.V[0xF] = (shrX & 0x1) == 1 ? 1 : 0;
                 break;
             case 7: // SUBN
-                this.V[0xF] = this.V[y] > this.V[x] ? 1 : 0;
                 this.V[x] = this.V[y] - this.V[x];
+                this.V[0xF] = this.V[y] > this.V[x] ? 1 : 0;
                 break;
             case 0xE: // SHL
-                this.V[0xF] = (this.V[x] >> 15 == 1) ? 1 : 0;
-                this.V[x] = this.V[x] * 2;
+                let shlX = this.V[x];
+                let shlRes = this.V[x] << 1;
+                this.V[x] = shlRes & 0xFF;
+                this.V[0xF] = (shlX >> 7 == 1) ? 1 : 0;
                 break;
             default:
                 console.error(`No implementation for type ${type} in execute8xy0`);

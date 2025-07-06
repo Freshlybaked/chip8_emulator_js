@@ -8,6 +8,7 @@ function App() {
     const WIDTH = 64;
     const HEIGHT = 32;
     const PIXEL_SIZE = 10;
+    const FPS = 60;
 
     const gameCanvasRef = useRef<any>(null);
 
@@ -15,13 +16,13 @@ function App() {
     const renderBuffer = new CollisionAwareRenderBuffer(WIDTH, HEIGHT);
     
     // Initialise chip 8 cpu
-    const chip8Cpu = new Chip8CPU(renderBuffer);
+    const chip8Cpu = new Chip8CPU();
     chip8Cpu.initRegisters();
     chip8Cpu.setOnCLSCallback(onClearDisplay);
     chip8Cpu.setOnDrawCallback(onDrawPixel);
 
     // Initialise timer
-    const clockTimer = new ClockTimer(60);
+    const clockTimer = new ClockTimer(FPS);
     clockTimer.setTickCallback(tick);
 
     function tick() {
@@ -31,15 +32,17 @@ function App() {
     // Callback functions
     function onClearDisplay() {
         renderBuffer.clearBuffer();
-        gameCanvasRef.current?.drawBufferToCanvas();
+        // gameCanvasRef.current?.drawBufferToCanvas();
+        gameCanvasRef.current?.clearCanvas();
     }
 
     function onDrawPixel(x:number, y:number){
-        let collided = renderBuffer.setPixelWithCollisionCheck(x, y);
-        if(collided){
-            chip8Cpu.pixelCollisionOccured();
-        }
-        gameCanvasRef.current?.drawBufferToCanvas();
+        // let collided = renderBuffer.setPixelWithCollisionCheck(x, y);
+        // if(collided){
+        //     chip8Cpu.pixelCollisionOccured();
+        // }
+        // gameCanvasRef.current?.drawBufferToCanvas();
+        gameCanvasRef.current?.drawPixel(x, y);
     }
 
     // file picker

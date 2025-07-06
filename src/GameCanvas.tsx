@@ -6,7 +6,9 @@ import "./GameCanvas.css";
 function GameCanvas({ref, ...props}) {
     useImperativeHandle(ref, () => {
         return {
-            drawBufferToCanvas
+            drawBufferToCanvas,
+            drawPixel,
+            clearCanvas
         };
     }, []);
 
@@ -41,6 +43,12 @@ function GameCanvas({ref, ...props}) {
         
         drawBufferToCanvas();
     });
+
+    function drawPixel(x:number, y:number){
+        let collided = renderBuffer.setPixelWithCollisionCheck(x, y);
+        canvasCtx.fillStyle = collided ? 'white' : 'black';
+        canvasCtx.fillRect((x+1) * pixelSize, (y+1) * pixelSize, pixelSize, pixelSize);
+    }
 
     function drawBufferToCanvas(){
         clearCanvas();

@@ -29,6 +29,8 @@ export class ClockTimer{
         this.startTime = this.then;
 
         this.tick();
+
+        window.setInterval(this.tick, 0);
     }
 
     stop(){
@@ -42,17 +44,21 @@ export class ClockTimer{
             return;
         }
 
-        requestAnimationFrame(this.tick);
-        
-        this.now = window.performance.now();
-        this.elapsed = this.now - this.then;
-        if (this.elapsed > this.fpsInterval) {
-            this.then = this.now - (this.elapsed % this.fpsInterval);
+        // requestAnimationFrame(this.tick);
 
-            if(this.tickCallback != null){
-                this.tickCallback();
-            }
+        if(this.tickCallback != null){
+            this.tickCallback();
         }
+        
+        // this.now = window.performance.now();
+        // this.elapsed = this.now - this.then;
+        // if (this.elapsed > this.fpsInterval) {
+        //     this.then = this.now - (this.elapsed % this.fpsInterval);
+
+        //     if(this.tickCallback != null){
+        //         this.tickCallback();
+        //     }
+        // }
     }
 
     // to deprecate?
