@@ -1,5 +1,6 @@
-import { useEffect } from 'react';
+import { useRef, useEffect } from 'react';
 
+import { CollisionAwareRenderBuffer } from './CollisionAwareRenderBuffer';
 import "./GameCanvas.css";
 
 function GameCanvas(props: any) {
@@ -8,60 +9,41 @@ function GameCanvas(props: any) {
     const gridHeight:number = props.gridHeight;
     const pixelSize:number = props.pixelSize;
 
+    let renderBuffer = useRef(new CollisionAwareRenderBuffer(gridWidth, gridHeight));
+    
     let canvasCtx:CanvasRenderingContext2D;
 
-    let buffer:number[] = [gridWidth * gridHeight].fill(0);
-
     useEffect(() => {
+        let canvasBorderWidth = (gridWidth + 2) * pixelSize;
+        let canvasBorderHeight = (gridHeight + 2) * pixelSize;
         let canvasRef:HTMLCanvasElement = document.getElementById("game_canvas") as HTMLCanvasElement
         canvasCtx = canvasRef.getContext("2d") as CanvasRenderingContext2D;
-        canvasRef.width = gridWidth * pixelSize;
-        canvasRef.height = gridHeight * pixelSize;
-        canvasCtx.strokeStyle = 'black';
-        canvasCtx.strokeRect(0, 0, (gridWidth * pixelSize), (gridHeight * pixelSize));
+        canvasRef.width = canvasBorderWidth;
+        canvasRef.height = canvasBorderHeight;
+        canvasCtx.strokeStyle = 'lightgreen';
+        canvasCtx.lineWidth = pixelSize * 2;
+        canvasCtx.strokeRect(0, 0, canvasBorderWidth, canvasBorderHeight);
+
+        // // testing code
+        // renderBuffer.current.setPixel(0, 0, 1);
+        // renderBuffer.current.setPixel(gridWidth-1, gridHeight-1, 1);
+        // drawBufferToScreen();
     });
 
-    function drawPixel(x:number, y:number):boolean{
-        let collisionOccured = getPixelCollision(x, y);
-        buffer[getIdx(x, y)] = collisionOccured ? 0 : 1;
-        setPixel(x, y, collisionOccured ? 'white' : 'black');
-        return collisionOccured;
-    }
-
-    function clear(){
-        buffer.fill(0);
-        redrawEntireBuffer();
-    }
-
-    function setPixel(x:number, y:number, colour:string){
-        // console.log("setting pixel at : " + x + ", " + y + " " +colour);
-        canvasCtx.fillStyle = colour;
-        canvasCtx.fillRect(x * pixelSize, y * pixelSize, pixelSize, pixelSize);
-    }
-
-    function getPixelCollision(x:number, y:number):boolean{
-        return buffer[getIdx(x, y)] == 1;
-    }
-
-    function redrawEntireBuffer(){
-        for (let i = 0; i < buffer.length; ++i){
-            let x = getX(i);
-            let y = getY(i);
-            setPixel(x, y, buffer[i] == 1 ? 'black' : 'white');
+    function drawBufferToScreen(){
+        let rawBuffer = renderBuffer.current.getRawBuffer();
+        for (let i = 0; i < rawBuffer.length; ++i){
+            canvasCtx.fillStyle = rawBuffer[i] == 0 ? 'white' : 'black';
+            canvasCtx.fillRect(getX(i) * pixelSize, getY(i) * pixelSize, pixelSize, pixelSize);
         }
     }
 
-    // Returns the index in the buffer for the pixel at (x, y)
-    function getIdx(x:number, y:number):number{
-        return (gridWidth * y) + x;
-    }
-
     function getX(idx:number):number{
-        return idx % gridWidth;
+        return (idx % gridWidth) + 1;
     }
 
     function getY(idx:number):number{
-        return (idx - (idx % gridWidth)) / gridWidth;
+        return ((idx - (idx % gridWidth)) / gridWidth) + 1;
     }
 
     return (
