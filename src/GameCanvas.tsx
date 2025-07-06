@@ -8,8 +8,7 @@ function GameCanvas(props: any) {
     const gridWidth:number = props.gridWidth;
     const gridHeight:number = props.gridHeight;
     const pixelSize:number = props.pixelSize;
-
-    let renderBuffer = useRef(new CollisionAwareRenderBuffer(gridWidth, gridHeight));
+    const renderBuffer:CollisionAwareRenderBuffer = props.renderBuffer;
     
     let canvasCtx:CanvasRenderingContext2D;
 
@@ -23,15 +22,11 @@ function GameCanvas(props: any) {
         canvasCtx.strokeStyle = 'lightgreen';
         canvasCtx.lineWidth = pixelSize * 2;
         canvasCtx.strokeRect(0, 0, canvasBorderWidth, canvasBorderHeight);
-
-        // // testing code
-        // renderBuffer.current.setPixel(0, 0, 1);
-        // renderBuffer.current.setPixel(gridWidth-1, gridHeight-1, 1);
-        // drawBufferToScreen();
+        drawBufferToScreen();
     });
 
     function drawBufferToScreen(){
-        let rawBuffer = renderBuffer.current.getRawBuffer();
+        let rawBuffer = renderBuffer.getRawBuffer();
         for (let i = 0; i < rawBuffer.length; ++i){
             canvasCtx.fillStyle = rawBuffer[i] == 0 ? 'white' : 'black';
             canvasCtx.fillRect(getX(i) * pixelSize, getY(i) * pixelSize, pixelSize, pixelSize);
