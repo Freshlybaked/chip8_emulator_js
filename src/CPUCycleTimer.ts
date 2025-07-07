@@ -1,4 +1,4 @@
-export class ClockTimer{
+export class CPUCycleTimer{
     public running:boolean = false;
 
     private tickCallback:(() => void) | undefined;

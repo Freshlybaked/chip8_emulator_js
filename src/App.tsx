@@ -1,7 +1,7 @@
 import { useRef, useEffect, type SyntheticEvent } from 'react';
 import GameCanvas from './GameCanvas';
 import { CollisionAwareRenderBuffer } from './CollisionAwareRenderBuffer';
-import { ClockTimer } from './ClockTimer.ts';
+import { CPUCycleTimer } from './CPUCycleTimer.ts';
 import { Chip8CPU } from './Chip8CPU.ts';
 import { KeypadInputHandler } from './KeypadInputHandler.ts';
 
@@ -22,8 +22,8 @@ function App() {
     chip8Cpu.setOnDrawCallback(onDrawPixel);
 
     // Initialise timer
-    const clockTimer = new ClockTimer();
-    clockTimer.setTickCallback(tick);
+    const cpuCycleTimer = new CPUCycleTimer();
+    cpuCycleTimer.setTickCallback(tick);
 
     function tick() {
         chip8Cpu.runOneCycle();
@@ -63,13 +63,13 @@ function App() {
             }
 
             let file = fpRef.current.files[0];
-            clockTimer.stop();
+            cpuCycleTimer.stop();
             readFileFromInputAsUint8Array(file)
                 .then(uint8Array => {
                     gameCanvasRef.current?.clearCanvas();
                     chip8Cpu.initRegisters();
                     chip8Cpu.loadROM(uint8Array);
-                    clockTimer.start();
+                    cpuCycleTimer.start();
                 })
                 .catch(error => {
                     console.error('Error reading file:', error);
