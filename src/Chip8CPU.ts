@@ -122,7 +122,6 @@ export class Chip8CPU{
     }
 
     private skipPCIncrement:boolean = false;
-    private drawFlag:boolean = false;
     public runOneCycle(){
         if(this.waitForKeyPress){
             return;
