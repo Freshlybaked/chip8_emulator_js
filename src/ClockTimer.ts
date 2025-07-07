@@ -1,10 +1,5 @@
 export class ClockTimer{
     public running:boolean = false;
-    private fpsInterval:number;
-
-    constructor(fps:number) {
-        this.fpsInterval = 1000 / fps;
-    }
 
     private tickCallback:(() => void) | undefined;
     setTickCallback(callback:() => void){

@@ -81,6 +81,28 @@ export class Chip8CPU{
         }
     }
 
+    public keyDown(key:number | undefined){
+        if(key == undefined){
+            return;
+        }
+
+        if(key < this.key.length){
+            this.key[key] = 1;
+
+            this.waitForKeyPress = false;
+        }
+    }
+
+    public keyUp(key:number | undefined){
+        if(key == undefined){
+            return;
+        }
+
+        if(key < this.key.length){
+            this.key[key] = 0;
+        }
+    }
+
     public pixelCollisionOccured(){
         this.V[0xF] = 1;
     }

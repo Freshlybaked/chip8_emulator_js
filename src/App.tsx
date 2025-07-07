@@ -1,14 +1,14 @@
-import { useRef, useEffect } from 'react';
+import { useRef, useEffect, type SyntheticEvent } from 'react';
 import GameCanvas from './GameCanvas';
 import { CollisionAwareRenderBuffer } from './CollisionAwareRenderBuffer';
 import { ClockTimer } from './ClockTimer.ts';
 import { Chip8CPU } from './Chip8CPU.ts';
+import { KeypadInputHandler } from './KeypadInputHandler.ts';
 
 function App() {
     const WIDTH = 64;
     const HEIGHT = 32;
     const PIXEL_SIZE = 10;
-    const FPS = 120;
 
     const gameCanvasRef = useRef<any>(null);
 
@@ -22,7 +22,7 @@ function App() {
     chip8Cpu.setOnDrawCallback(onDrawPixel);
 
     // Initialise timer
-    const clockTimer = new ClockTimer(FPS);
+    const clockTimer = new ClockTimer();
     clockTimer.setTickCallback(tick);
 
     function tick() {
@@ -38,10 +38,23 @@ function App() {
         gameCanvasRef.current?.drawPixel(x, y);
     }
 
+    function onKeyDown(event:any){
+        let chip8Key = KeypadInputHandler.translatePhysicalKeyboardInputToKeypad(event);
+        chip8Cpu.keyDown(chip8Key);
+    }
+
+    function onKeyUp(event:any){
+        let chip8Key = KeypadInputHandler.translatePhysicalKeyboardInputToKeypad(event);
+        chip8Cpu.keyUp(chip8Key);
+    }
+
     // file picker
     const fpRef = useRef<any>(null);
     useEffect(() => {
         console.log("Initialising App");
+
+        window.addEventListener("keydown", onKeyDown);
+        window.addEventListener("keyup", onKeyUp);
 
         fpRef.current.addEventListener("change", function(){
             if(fpRef.current.files == null || fpRef.current.files.length == 0){
