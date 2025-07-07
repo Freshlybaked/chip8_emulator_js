@@ -103,6 +103,23 @@ export class Chip8CPU{
         }
     }
 
+    public decrementTimers(){
+        if(this.dt > 0){
+            --this.dt;
+        }
+
+        if(this.st > 0) {
+            if(this.onPlayBeepCallback != null){
+                this.onPlayBeepCallback();
+            }
+            --this.st;
+        } else {
+            if(this.onStopBeepCallback != null){
+                this.onStopBeepCallback();
+            }
+        }
+    }
+
     public pixelCollisionOccured(){
         this.V[0xF] = 1;
     }
@@ -118,6 +135,20 @@ export class Chip8CPU{
     setOnCLSCallback(callback:() => void){
         if(callback != null){
             this.onCLSCallback = callback;
+        }
+    }
+
+    private onPlayBeepCallback:(() => void) | undefined;
+    setOnPlayBeepCallback(callback:() => void){
+        if(callback != null){
+            this.onPlayBeepCallback = callback;
+        }
+    }
+
+    private onStopBeepCallback:(() => void) | undefined;
+    setOnStopBeepCallback(callback:() => void){
+        if(callback != null){
+            this.onStopBeepCallback = callback;
         }
     }
 

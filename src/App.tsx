@@ -2,8 +2,10 @@ import { useRef, useEffect, type SyntheticEvent } from 'react';
 import GameCanvas from './GameCanvas';
 import { CollisionAwareRenderBuffer } from './CollisionAwareRenderBuffer';
 import { CPUCycleTimer } from './CPUCycleTimer.ts';
+import { SteadyTimer } from './SteadyTimer.ts';
 import { Chip8CPU } from './Chip8CPU.ts';
 import { KeypadInputHandler } from './KeypadInputHandler.ts';
+import { AudioPlayer } from './AudioPlayer.ts';
 
 function App() {
     const WIDTH = 64;
@@ -20,13 +22,25 @@ function App() {
     chip8Cpu.initRegisters();
     chip8Cpu.setOnCLSCallback(onClearDisplay);
     chip8Cpu.setOnDrawCallback(onDrawPixel);
+    chip8Cpu.setOnPlayBeepCallback(onPlayBeep);
+    chip8Cpu.setOnStopBeepCallback(onStopBeep);
 
-    // Initialise timer
+    // Initialise audio player
+    const audioPlayer = new AudioPlayer(0.1);
+
+    // Initialise timers
     const cpuCycleTimer = new CPUCycleTimer();
     cpuCycleTimer.setTickCallback(tick);
 
+    const steadyTimer = new SteadyTimer(60); // used for decrementing dt and st
+    steadyTimer.setTickCallback(decrementTimers);
+
     function tick() {
         chip8Cpu.runOneCycle();
+    }
+
+    function decrementTimers(){
+        chip8Cpu.decrementTimers();
     }
     
     // Callback functions
@@ -48,6 +62,14 @@ function App() {
         chip8Cpu.keyUp(chip8Key);
     }
 
+    function onPlayBeep(){
+        audioPlayer.beep();
+    }
+
+    function onStopBeep(){
+        audioPlayer.stop();
+    }
+
     // file picker
     const fpRef = useRef<any>(null);
     useEffect(() => {
@@ -64,12 +86,15 @@ function App() {
 
             let file = fpRef.current.files[0];
             cpuCycleTimer.stop();
+            steadyTimer.stop();
             readFileFromInputAsUint8Array(file)
                 .then(uint8Array => {
                     gameCanvasRef.current?.clearCanvas();
                     chip8Cpu.initRegisters();
                     chip8Cpu.loadROM(uint8Array);
                     cpuCycleTimer.start();
+                    steadyTimer.start();
+                    audioPlayer.resume();
                 })
                 .catch(error => {
                     console.error('Error reading file:', error);
