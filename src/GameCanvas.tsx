@@ -60,13 +60,10 @@ function GameCanvas({ref, ...props}) {
     }
 
     function clearCanvas(){
+        renderBuffer.clearBuffer();
         canvasCtx.fillStyle = 'white';
         canvasCtx.fillRect(1 * pixelSize, 1 * pixelSize, pixelSize * gridWidth, pixelSize * gridHeight);
     }
-
-    // function drawPixelToCanvas(x:number, y:number){
-
-    // }
 
     function getX(idx:number):number{
         return (idx % gridWidth) + 1;

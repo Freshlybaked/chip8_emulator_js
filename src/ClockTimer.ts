@@ -10,6 +10,7 @@ export class ClockTimer{
 
     constructor(fps:number) {
         this.fpsInterval = 1000 / fps;
+        console.log(`fpsInterval: ${this.fpsInterval}`);
     }
 
     private tickCallback:(() => void) | undefined;
@@ -29,8 +30,6 @@ export class ClockTimer{
         this.startTime = this.then;
 
         this.tick();
-
-        window.setInterval(this.tick, 0);
     }
 
     stop(){
@@ -44,24 +43,21 @@ export class ClockTimer{
             return;
         }
 
-        // requestAnimationFrame(this.tick);
-
-        if(this.tickCallback != null){
-            this.tickCallback();
-        }
+        requestAnimationFrame(this.tick);
         
-        // this.now = window.performance.now();
-        // this.elapsed = this.now - this.then;
-        // if (this.elapsed > this.fpsInterval) {
-        //     this.then = this.now - (this.elapsed % this.fpsInterval);
+        this.now = window.performance.now();
+        this.elapsed = this.now - this.then;
+        if (this.elapsed > this.fpsInterval) {
+            this.then = this.now - (this.elapsed % this.fpsInterval);
 
-        //     if(this.tickCallback != null){
-        //         this.tickCallback();
-        //     }
-        // }
+            if(this.tickCallback != null){
+                this.tickCallback();
+            }
+
+            // this.logFps();
+        }
     }
-
-    // to deprecate?
+    
     logFps(){
         var sinceStart = this.now - this.startTime;
         var currentFps = Math.round(1000 / (sinceStart / ++this.frameCount) * 100) / 100;

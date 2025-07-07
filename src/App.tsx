@@ -8,7 +8,7 @@ function App() {
     const WIDTH = 64;
     const HEIGHT = 32;
     const PIXEL_SIZE = 10;
-    const FPS = 60;
+    const FPS = 120;
 
     const gameCanvasRef = useRef<any>(null);
 
@@ -31,17 +31,10 @@ function App() {
     
     // Callback functions
     function onClearDisplay() {
-        renderBuffer.clearBuffer();
-        // gameCanvasRef.current?.drawBufferToCanvas();
         gameCanvasRef.current?.clearCanvas();
     }
 
     function onDrawPixel(x:number, y:number){
-        // let collided = renderBuffer.setPixelWithCollisionCheck(x, y);
-        // if(collided){
-        //     chip8Cpu.pixelCollisionOccured();
-        // }
-        // gameCanvasRef.current?.drawBufferToCanvas();
         gameCanvasRef.current?.drawPixel(x, y);
     }
 
@@ -60,7 +53,7 @@ function App() {
             clockTimer.stop();
             readFileFromInputAsUint8Array(file)
                 .then(uint8Array => {
-                    renderBuffer.clearBuffer();
+                    gameCanvasRef.current?.clearCanvas();
                     chip8Cpu.initRegisters();
                     chip8Cpu.loadROM(uint8Array);
                     clockTimer.start();

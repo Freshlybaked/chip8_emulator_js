@@ -125,7 +125,6 @@ export class Chip8CPU{
 
         // Fetch corresponding function from instruction table
         let opFunction = this.instructionTable[firstNibble];
-        // console.log(`opFunction for ${firstNibble}`);
         opFunction();
     }
 
@@ -337,8 +336,6 @@ export class Chip8CPU{
                     if(this.onDrawCallback != null){
                         this.onDrawCallback(posX, posY);
                     }
-                    // let collided = gamecanvas.drawPixel(posX, posY);
-                    // V[0xF] = collided ? 1 : 0;
                 }
             }
         }
